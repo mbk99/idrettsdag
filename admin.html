@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>2nd</title>
+    <style>
+        .body{
+            display: grid;
+            grid-template-rows: 10% 1fr 5%;
+            height: 98vh;
+            width: 99vw;
+            margin: 0;
+            background-image: url("Bilder/golf-grass.jpg");
+            background-repeat: no-repeat;
+            background-size:cover;
+
+        }
+
+
+        header{
+            text-align: center;
+        }
+
+        h1{
+            font-size: 50px;
+            color: white;
+        }
+
+
+        main{
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+
+        }
+
+
+        input{
+            width: 250px;
+            height: 40px;
+            font-size: 30px;
+
+        }
+
+        label{
+            font-size: 35px;
+        }
+
+
+        .btn{
+            font-size: 20px;
+        }
+
+
+        .maingrid{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            height: 50vh;
+
+        }
+
+        footer{
+            text-align: right;
+            color: white;
+            padding-right: 8px;
+
+        }
+
+
+
+
+        a{
+            color: white;
+            font-size: 20px;
+        }
+
+        a:after{
+            font-style: normal;
+        }
+
+        @media(max-width: 530px) {
+            h1{visibility: hidden}
+
+        }
+
+        @media(max-height: 470px) {
+            h1{visibility: hidden}
+
+        }
+
+
+
+
+    </style>
+</head>
+<body>
+<div class="body">
+<script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyD0oKrAn75gLKVLZqulHnkcz3s1IIziV4A",
+        authDomain: "random69420-f618e.firebaseapp.com",
+        databaseURL: "https://random69420-f618e.firebaseio.com",
+        projectId: "random69420-f618e",
+        storageBucket: "random69420-f618e.appspot.com",
+        messagingSenderId: "400339442009"
+    };
+    firebase.initializeApp(config);
+</script>
+
+
+    <header>
+        <h1>Admistrer idrettsdagen!</h1>
+    </header>
+
+
+
+<main>
+    <div class="maingrid">
+
+        <form id="idrettskjema">
+            <label for="leggtilidrett">Legg til idrett</label>
+                <input id="leggtilidrett" type="text" placeholder="Fotball" required>
+                    <button type="submit" class="btn">Send</button>
+        </form>
+
+
+
+
+        <form id="skoleskjema">
+            <label for="leggtilskole">Legg til skole</label>
+                <input id="leggtilskole" type="text" placeholder="Ski vgs" required>
+                    <button class="btn">Send</button>
+        </form>
+
+
+
+        <form id="trinnskjema">
+            <label for="leggtiltrinn">Legg til trinn</label><br>
+                <input id="leggtiltrinn" type="text" placeholder="Vg1" required>
+                    <button type="submit" class="btn">Send</button>
+        </form>
+
+    </div>
+
+    <script>
+
+        var database = firebase.database();
+
+        var idrettDB = database.ref("Idrett");
+        var addIdrett = document.getElementById("leggtilidrett");
+        var idrettSkjema = document.getElementById("idrettskjema");
+
+
+
+        var skoleDB = database.ref("Skole");
+        var addSkole = document.getElementById("leggtilskole");
+        var skoleSkjema = document.getElementById("skoleskjema");
+
+
+        var trinnDB = database.ref("Trinn");
+        var addTrinn = document.getElementById("leggtiltrinn");
+        var trinnSkjema = document.getElementById("trinnskjema");
+
+
+
+        function leggTilIdrett(event) {
+
+            event.preventDefault(); //hindrer at siden blir lastet på nytt når funksjonen fyres av
+
+            var nyIdrett = {
+                Idrett:addIdrett.value
+            }; //viser hvordan informasjonen skal lagres
+
+            idrettDB.push(nyIdrett); //når informasjonen dyttes inn i databasen gjør denne at firebase velger primærnøkkel
+            console.log(nyIdrett);
+
+            addIdrett.value=""; //tømmer input feltet når man trykker send
+        }
+
+        idrettSkjema.onsubmit = leggTilIdrett;  //fyrer av leggTilIdrett-funksjonen når man trykker på "send"
+
+
+
+        function leggTilSkole(event) {
+            event.preventDefault();
+
+            var nySkole = {
+                Skole:addSkole.value
+            };
+
+            skoleDB.push(nySkole);
+            console.log(nySkole);
+
+            addSkole.value="";
+
+        }
+
+        skoleSkjema.onsubmit = leggTilSkole;
+
+
+
+
+        function leggTilTrinn(event) {
+            event.preventDefault();
+
+            var nyTrinn = {
+                Trinn:addTrinn.value
+            };
+
+            trinnDB.push(nyTrinn);
+            console.log(nyTrinn);
+
+            addTrinn.value = "";
+
+
+
+        }
+
+        trinnSkjema.onsubmit = leggTilTrinn;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+
+
+</main>
+
+
+
+
+
+    <footer><a href="index.html">Ta meg tilbake til registrering!</a></footer>
+
+
+
+
+
+
+</div>
+</body>
+</html>

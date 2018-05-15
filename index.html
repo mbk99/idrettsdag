@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrering</title>
+    <style>
+        .body{
+            display: grid;
+            grid-template-rows: 10% 1fr 5%;
+            height: 98vh;
+            width: 99vw;
+            margin: 0;
+            background-image: url("Bilder/golf-grass.jpg");
+            background-repeat: no-repeat;
+            background-size:cover;
+            font-family: sans-serif;
+
+        }
+
+        h1{
+            font-size: 50px;
+            color: white;
+        }
+
+
+        #button{
+            font-size: 25px;
+        }
+
+
+        .header{
+            text-align: center;
+
+        }
+
+        .main{
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        .footer{
+            text-align: right;
+            color: white;
+            padding-right: 8px;
+
+        }
+
+        input{
+            width: 450px;
+            height: 40px;
+            font-size: 30px;
+        }
+
+        select {
+            width: 450px;
+            height: 40px;
+            font-size: 30px;
+        }
+
+
+        #skjema{
+            align-self: center;
+
+        }
+
+
+
+        .ytre-påmeldt-lag{
+            position: relative;
+            overflow: scroll;
+
+        }
+
+
+        .påmeldte-lag{
+            border: 4px solid black;
+
+
+        }
+
+        .gridmain{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 80vw;
+            min-width: 850px;
+            height: 60vh;
+            background-color: rgba(0,0,0,0.4);
+            padding: 10px;
+            box-shadow: 20px 30px 40px black;
+            border-radius: 10px;
+
+        }
+
+
+
+          a{
+              color: white;
+              font-size: 20px;
+          }
+
+          a:after{
+              font-style: normal;
+          }
+
+        .table{
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th {
+            text-align: center;
+            padding: 8px;
+            background-color: rgba(0,0,0,0.4);
+            color: white;
+            border: 2px solid black;
+            height: 40px;
+            font-family: sans-serif;
+
+
+        }
+
+        td{
+            text-align: center;
+            border: 1px solid black;
+            height: 30px;
+            color: white;
+            font-family: sans-serif;
+            font-weight: lighter;
+
+        }
+
+
+
+        
+        @media(max-width: 530px) {
+            h1{visibility: hidden}
+            
+        }
+
+        @media(max-height: 470px) {
+            h1{visibility: hidden}
+
+        }
+
+
+    </style>
+</head>
+<body>
+
+
+<script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyD0oKrAn75gLKVLZqulHnkcz3s1IIziV4A",
+    authDomain: "random69420-f618e.firebaseapp.com",
+    databaseURL: "https://random69420-f618e.firebaseio.com",
+    projectId: "random69420-f618e",
+    storageBucket: "random69420-f618e.appspot.com",
+    messagingSenderId: "400339442009"
+  };
+  firebase.initializeApp(config);
+</script>
+
+
+
+
+<div class="body">
+    <header class="header"><h1>Registrer deg til tidenes idrettsdag på Ski vgs:</h1></header>
+        <main class="main">
+
+            <div class="gridmain">
+                <form id="skjema">
+                    <input id="navn" type="text" placeholder="Fornavn Etternavn" required>
+
+                <br>
+                <br>
+
+                <input type="text" placeholder="Lagnavn" id="lagnavn" required>
+
+                    <br>
+                    <br>
+
+                   <select id="selektorskole">
+                        <option value="">Velg skole</option>
+                   </select>
+
+                <br>
+                <br>
+
+                 <select id="selektoridrett">
+                      <option value="">Velg idrett</option>
+                 </select>
+
+                <br>
+                <br>
+
+                <select id="selektortrinn">
+                     <option value="">Velg trinn</option>
+                </select>
+
+                <br>
+                <br>
+                
+                <button type="submit" id="button">Send inn</button>
+
+            </form>
+
+
+
+
+
+
+                <div class="ytre-påmeldt-lag">
+                        <div class="påmeldte-lag">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Lagnavn</th>
+                                            <th>Navn</th>
+                                                <th>Skole</th>
+                                                    <th>Trinn</th>
+                                                        <th>Idrett</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabletext"></tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+
+
+
+
+            </div>
+
+
+
+
+
+            <script>
+                var database = firebase.database();
+                
+                var lagDB = database.ref("Lag");
+
+                var navnetternavn = document.getElementById("navn");
+                var Lagnavn = document.getElementById("lagnavn");
+                var selskole = document.getElementById("selektorskole");
+                var selidrett = document.getElementById("selektoridrett");
+                var seltrinn = document.getElementById("selektortrinn");
+                var formskjema = document.getElementById("skjema");
+
+
+
+                function regNyNavnogLag(event) {
+
+                    event.preventDefault();
+
+                    var nyNavnLag = {
+                        Navn:navnetternavn.value,
+                        Lagnavn:Lagnavn.value,
+                        Skole:selskole.value,
+                        Idrett:selidrett.value,
+                        Trinn:seltrinn.value
+                    };
+                    console.log(nyNavnLag); //når funksjonen fyres av gjør console.log at jeg kan se hva som blir sendt til databasen
+
+                    lagDB.push(nyNavnLag);
+
+                    navnetternavn.value="";   //tømmer etter skjema har blit submitert
+                    Lagnavn.value="";
+                    selskole.value="";
+                    selidrett.value="";
+                    seltrinn.value="";
+                    
+
+                }
+
+                formskjema.onsubmit = regNyNavnogLag;
+
+
+
+                //snapshot som henter idretter som blir lagt inn på admin-siden
+
+                var idrettDB = database.ref("Idrett"); //referanse til databasen for idrett
+
+
+                function hentIdrettfradb(snapshot) {
+                    var hentIdrettKEY = snapshot.key;       //hva gjør denne
+                    var hentIdrett = snapshot.val();  //hva gjør denne
+                    selidrett.innerHTML += `<option value="${hentIdrettKEY}">${hentIdrett.Idrett}</option>`;  //henter iformasjon fra databasen, og istedenfor å hente ut primærnøkkelen som ikke gir mening henter vi ut verdien, som i dette tilfellet er idrett
+                }
+
+                idrettDB.on("child_added", hentIdrettfradb);
+
+
+
+                //snapshot som henter skoler som blir lagt inn på admin-siden
+
+                var skoleDB = database.ref("Skole");
+
+                function hentSkolefradb(snapshot) {
+                    var hentSkoleKEY = snapshot.key; //legger til nøkkelen i databasen
+                    var hentSkole = snapshot.val(); //henter verdien til nøkkelen på siden
+                    selskole.innerHTML += `<option value="${hentSkoleKEY}">${hentSkole.Skole}</option>`;
+
+
+                    console.log(hentSkolefradb);
+                }
+
+                skoleDB.on("child_added", hentSkolefradb);
+
+
+
+
+                var trinnDB = database.ref("Trinn");
+
+                function hentTrinnfradb(snapshot) {
+                    var hentTrinnKEY = snapshot.key;
+                    var hentTrinn = snapshot.val();
+                    seltrinn.innerHTML += `<option value="${hentTrinnKEY}">${hentTrinn.Trinn}</option>`;
+
+                    console.log(hentTrinnfradb);
+
+                }
+                trinnDB.on("child_added", hentTrinnfradb);
+
+
+
+
+                var tabletxt = document.getElementById("tabletext");
+
+                function hentLagTilTabell(snapshot) {
+                    var lagObjekt = snapshot.val();
+                    var lagnavn = lagObjekt.Lagnavn;
+                    var navn = lagObjekt.Navn;
+                    var skolenKey = lagObjekt.Skole;
+                    console.log(skolenKey);
+                    var skolen, idrett, trinn, lag;
+                    var skoleDB = database.ref("Skole/" + skolenKey);
+                    skoleDB.on("value", function (skolenSnapshot) {
+                        skolen = skolenSnapshot.val().Skole;
+
+
+                    });
+
+
+                        var trinnKey = lagObjekt.Trinn;
+                        trinnDB = database.ref("Trinn/" + trinnKey);
+                        trinnDB.on("value", function (trinnSnapshot) {
+                            trinn = trinnSnapshot.val().Trinn;
+                        });
+
+
+                        var idrettKey = lagObjekt.Idrett;
+                        idrettDB = database.ref("Idrett/" + idrettKey);
+                        idrettDB.on("value", function (idrettSnapshot) {
+                            idrett = idrettSnapshot.val().Idrett;
+                        });
+
+
+
+
+
+
+
+                        tabletxt.innerHTML += `<tr>
+                                                    <td>${lagnavn}</td>
+                                                    <td>${navn}</td>
+                                                    <td>${skolen}</td>
+                                                    <td>${trinn}</td>
+                                                    <td>${idrett}</td>
+
+                                                    </tr>`;
+
+
+                    console.log(skolenKey, skolen);
+                }
+
+
+                lagDB.on("child_added", hentLagTilTabell);
+
+
+            </script>
+
+
+
+        </main>
+
+
+
+            <footer class="footer">
+                <a href="admin.html">Admistrator? Klikk her!</a>
+            </footer>
+    
+</div>
+
+
+</body>
+</html>
