@@ -234,20 +234,17 @@
                 </div>
 
 
-
-
-
             </div>
 
 
 
-
-
             <script>
+
+                //referanse til databasene i firebase
                 var database = firebase.database();
-                
                 var lagDB = database.ref("Lag");
 
+                //henter html-objektene
                 var navnetternavn = document.getElementById("navn");
                 var Lagnavn = document.getElementById("lagnavn");
                 var selskole = document.getElementById("selektorskole");
@@ -257,10 +254,15 @@
 
 
 
+
+                
+
+                //funksjon for å registrere et lag under "Lag"-databasen i firebase
                 function regNyNavnogLag(event) {
 
-                    event.preventDefault();
+                    event.preventDefault(); //hindrer at vi blir sendt til ny side
 
+                    //henter og strukturerer hvordan objektet som blir sendt til databasen skal se ut
                     var nyNavnLag = {
                         Navn:navnetternavn.value,
                         Lagnavn:Lagnavn.value,
@@ -268,11 +270,15 @@
                         Idrett:selidrett.value,
                         Trinn:seltrinn.value
                     };
-                    console.log(nyNavnLag); //når funksjonen fyres av gjør console.log at jeg kan se hva som blir sendt til databasen
+                    console.log(nyNavnLag);
 
+
+                    //får firebase til å generere en unik primærnøkkel
                     lagDB.push(nyNavnLag);
 
-                    navnetternavn.value="";   //tømmer etter skjema har blit submitert
+
+                    //tømmer input-områdene etter skjemaet har blitt submitert
+                    navnetternavn.value="";
                     Lagnavn.value="";
                     selskole.value="";
                     selidrett.value="";
@@ -280,40 +286,57 @@
                     
 
                 }
-
+                //registrerer lyttefunksjonene i skjemaet
                 formskjema.onsubmit = regNyNavnogLag;
 
 
 
-                //snapshot som henter idretter som blir lagt inn på admin-siden
-
-                var idrettDB = database.ref("Idrett"); //referanse til databasen for idrett
 
 
+
+
+
+                //referanse til databasen for idrett
+                var idrettDB = database.ref("Idrett");
+
+                //snapshot som henter idretter som blir lagt inn på admin-siden fra databasen, og viser dem i select-elemtentet
                 function hentIdrettfradb(snapshot) {
-                    var hentIdrettKEY = snapshot.key;       //hva gjør denne
-                    var hentIdrett = snapshot.val();  //hva gjør denne
+                    var hentIdrettKEY = snapshot.key;     //henter ut elementet
+                    var hentIdrett = snapshot.val();     // henter ut verdien til elementet
                     selidrett.innerHTML += `<option value="${hentIdrettKEY}">${hentIdrett.Idrett}</option>`;  //henter iformasjon fra databasen, og istedenfor å hente ut primærnøkkelen som ikke gir mening henter vi ut verdien, som i dette tilfellet er idrett
                 }
-
+                //registrerer lyttefunksjonene i databasen på firebase
                 idrettDB.on("child_added", hentIdrettfradb);
 
 
 
-                //snapshot som henter skoler som blir lagt inn på admin-siden
 
+
+
+
+
+
+                //referanse til databasen for skole
                 var skoleDB = database.ref("Skole");
 
+                //snapshot som henter idretter som blir lagt inn på admin-siden fra databasen, og viser dem i select-elemtentet
                 function hentSkolefradb(snapshot) {
-                    var hentSkoleKEY = snapshot.key; //legger til nøkkelen i databasen
+                    var hentSkoleKEY = snapshot.key; //henter nøkkelen fra databasen
                     var hentSkole = snapshot.val(); //henter verdien til nøkkelen på siden
-                    selskole.innerHTML += `<option value="${hentSkoleKEY}">${hentSkole.Skole}</option>`;
+                    selskole.innerHTML += `<option value="${hentSkoleKEY}">${hentSkole.Skole}</option>`; //henter iformasjon fra databasen, og istedenfor å hente ut primærnøkkelen som ikke gir mening henter vi ut verdien, som i dette tilfellet er idrett
 
 
                     console.log(hentSkolefradb);
                 }
 
+                //registrerer lyttefunksjonene i databasen på firebase
                 skoleDB.on("child_added", hentSkolefradb);
+
+
+
+
+
+
 
 
 
@@ -328,13 +351,21 @@
                     console.log(hentTrinnfradb);
 
                 }
+
                 trinnDB.on("child_added", hentTrinnfradb);
 
 
 
 
+
+
+
+
+
+                //henter html-objektet
                 var tabletxt = document.getElementById("tabletext");
 
+                //snapshot som henter inn informasjon fra databasen, for å så strukturere den i en tabell
                 function hentLagTilTabell(snapshot) {
                     var lagObjekt = snapshot.val();
                     var lagnavn = lagObjekt.Lagnavn;
@@ -349,14 +380,14 @@
 
                     });
 
-
+                    //henter ut idrett fra databasen, og registrer en lyttefunksjon inni lyttefunksjonen for å hente ut verdien til trinn
                         var trinnKey = lagObjekt.Trinn;
                         trinnDB = database.ref("Trinn/" + trinnKey);
                         trinnDB.on("value", function (trinnSnapshot) {
                             trinn = trinnSnapshot.val().Trinn;
                         });
 
-
+                        //henter ut idrett fra databasen, og registrer en lyttefunksjon inni lyttefunksjonen for å hente ut verdien til idrett
                         var idrettKey = lagObjekt.Idrett;
                         idrettDB = database.ref("Idrett/" + idrettKey);
                         idrettDB.on("value", function (idrettSnapshot) {
@@ -365,10 +396,7 @@
 
 
 
-
-
-
-
+                        //legger til ny rad i tabellen
                         tabletxt.innerHTML += `<tr>
                                                     <td>${lagnavn}</td>
                                                     <td>${navn}</td>
