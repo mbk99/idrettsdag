@@ -33,6 +33,8 @@
 
         }
 
+
+
         .main{
             text-align: center;
             display: flex;
@@ -44,8 +46,12 @@
         .footer{
             text-align: right;
             color: white;
-            padding-right: 8px;
 
+        }
+
+
+        .footerbuttons{
+            margin-right: 8vw;
         }
 
         input{
@@ -75,11 +81,11 @@
         }
 
 
-        .påmeldte-lag{
+       /* .påmeldte-lag{
             border: 4px solid black;
 
-
         }
+        */
 
         .gridmain{
             display: grid;
@@ -96,14 +102,21 @@
 
 
 
-          a{
-              color: white;
-              font-size: 20px;
-          }
+        a{
+            color: white;
+            font-size: 20px;
+            float: left;
+            margin-left: 10px;
+            margin-bottom: 50px;
+        }
 
-          a:after{
-              font-style: normal;
-          }
+
+
+        a:after{
+            font-style: normal;
+        }
+
+
 
         .table{
             font-family: arial, sans-serif;
@@ -130,9 +143,29 @@
             color: white;
             font-family: sans-serif;
             font-weight: lighter;
+            font-size: 14px;
 
         }
 
+        #tblbtn{
+            float: left;
+            vertical-align: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border-radius: 5px;
+
+
+
+        }
+
+
+        .knapp {
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            font-size: 18px;
+            border-radius: 10px;
+
+        }
 
 
         
@@ -145,6 +178,10 @@
             h1{visibility: hidden}
 
         }
+
+
+
+
 
 
     </style>
@@ -185,21 +222,21 @@
                     <br>
                     <br>
 
-                   <select id="selektorskole">
+                   <select id="selektorskole" required>
                         <option value="">Velg skole</option>
                    </select>
 
                 <br>
                 <br>
 
-                 <select id="selektoridrett">
+                 <select id="selektoridrett" required>
                       <option value="">Velg idrett</option>
                  </select>
 
                 <br>
                 <br>
 
-                <select id="selektortrinn">
+                <select id="selektortrinn" required>
                      <option value="">Velg trinn</option>
                 </select>
 
@@ -209,6 +246,7 @@
                 <button type="submit" id="button">Send inn</button>
 
             </form>
+
 
 
 
@@ -240,6 +278,7 @@
 
             <script>
 
+
                 //referanse til databasene i firebase
                 var database = firebase.database();
                 var lagDB = database.ref("Lag");
@@ -255,7 +294,7 @@
 
 
 
-                
+
 
                 //funksjon for å registrere et lag under "Lag"-databasen i firebase
                 function regNyNavnogLag(event) {
@@ -299,11 +338,17 @@
                 //referanse til databasen for idrett
                 var idrettDB = database.ref("Idrett");
 
+
+                //input for å sortere
+               // var selSorterIdrett = document.getElementById("selSorterIdrett");
+
+
                 //snapshot som henter idretter som blir lagt inn på admin-siden fra databasen, og viser dem i select-elemtentet
                 function hentIdrettfradb(snapshot) {
                     var hentIdrettKEY = snapshot.key;     //henter ut elementet
                     var hentIdrett = snapshot.val();     // henter ut verdien til elementet
                     selidrett.innerHTML += `<option value="${hentIdrettKEY}">${hentIdrett.Idrett}</option>`;  //henter iformasjon fra databasen, og istedenfor å hente ut primærnøkkelen som ikke gir mening henter vi ut verdien, som i dette tilfellet er idrett
+                    //selSorterIdrett.innerHTML += `<option value="${hentIdrettKEY}">${hentIdrett.Idrett}</option>`;  //lik som den over, bare denne viser for selector i footer.
                 }
                 //registrerer lyttefunksjonene i databasen på firebase
                 idrettDB.on("child_added", hentIdrettfradb);
@@ -326,7 +371,7 @@
                     selskole.innerHTML += `<option value="${hentSkoleKEY}">${hentSkole.Skole}</option>`; //henter iformasjon fra databasen, og istedenfor å hente ut primærnøkkelen som ikke gir mening henter vi ut verdien, som i dette tilfellet er idrett
 
 
-                    console.log(hentSkolefradb);
+                   // console.log(hentSkolefradb);
                 }
 
                 //registrerer lyttefunksjonene i databasen på firebase
@@ -348,7 +393,7 @@
                     var hentTrinn = snapshot.val();
                     seltrinn.innerHTML += `<option value="${hentTrinnKEY}">${hentTrinn.Trinn}</option>`;
 
-                    console.log(hentTrinnfradb);
+                    //console.log(hentTrinnfradb);
 
                 }
 
@@ -371,7 +416,7 @@
                     var lagnavn = lagObjekt.Lagnavn;
                     var navn = lagObjekt.Navn;
                     var skolenKey = lagObjekt.Skole;
-                    console.log(skolenKey);
+                    //console.log(skolenKey);
                     var skolen, idrett, trinn, lag;
                     var skoleDB = database.ref("Skole/" + skolenKey);
                     skoleDB.on("value", function (skolenSnapshot) {
@@ -396,9 +441,10 @@
 
 
 
+
                         //legger til ny rad i tabellen
                         tabletxt.innerHTML += `<tr>
-                                                    <td>${lagnavn}</td>
+                                                    <td><button id="tblbtn" onclick="fjernLag(this)">Fjern</button>${lagnavn}</td>
                                                     <td>${navn}</td>
                                                     <td>${skolen}</td>
                                                     <td>${trinn}</td>
@@ -407,11 +453,117 @@
                                                     </tr>`;
 
 
-                    console.log(skolenKey, skolen);
+
+
+
                 }
 
 
                 lagDB.on("child_added", hentLagTilTabell);
+
+                
+                
+
+
+
+
+
+
+                //viser bare fotball i tabellen
+                //tekniske problemer: ved å først sortere, og deretter legge inn et nytt lag vil laget legges til flere ganger i tabellen, som er feil, men bare én gang i databasen, som er riktig
+                //når siden refreshes vil bare et lag være lagt til
+                function visFotball() {
+                    //lagDB.off("child_added"); feilmelding: firebase warning: inspecified index, fjerner den. Funker mest sannsynelig ikke på grunn av min litt spesielle database
+
+                    tabletxt.innerText="";
+                    lagDB
+                        .orderByChild("Idrett")
+                        .equalTo("-LCSeldr2EJ-4e1Y6V61")
+                        .on("child_added", hentLagTilTabell);
+
+
+                }
+
+
+
+                 //viser bare curling i tabellen
+                function visCurling() {
+                    //lagDB.off("child_added"); feilmelding: firebase warning: inspecified index, fjerner den. Funker mest sannsynelig ikke på grunn av min litt spesielle database
+
+
+                    tabletxt.innerText="";
+                    lagDB
+                        .orderByChild("Idrett")
+                        .equalTo("-LCSemi5AtGouR5JGK0p")
+                        .on("child_added", hentLagTilTabell);
+
+
+                }
+
+
+                //funksjon som viser alle idrettene i tabellen, sortert etter primærnøkkel
+                function visAlle() {
+                    lagDB.off("child_added"); //funker, buggen forsvinner
+
+                    tabletxt.innerText="";
+                    lagDB
+                        .orderByChild("Idrett")
+                        .on("child_added", hentLagTilTabell);
+
+
+                }
+
+
+
+
+
+                //fjerner bare fra tabellen, ikke fra databasen. Denne endrer også på et eller annet som gjør at tabellen ikke vil sortere seg etter at en rad er slettet.
+                function fjernLag(btn) {
+                    tabletxt = btn.parentNode.parentNode;
+                    tabletxt.parentNode.removeChild(tabletxt);
+                    console.log(fjernLag);
+
+                }
+
+
+
+
+
+
+
+
+                console.log("Du får bare lov til å sortere tabellen etter fotball og curling, dessverre.");
+                console.log("Sortering funker ikke etter man har slettet en rad");
+
+
+
+
+                /*
+                function sorterIdrett() {
+                    var selSorterIdrett = document.getElementById("selSorterIdrett");
+                    var hentIdrettKey = selSorterIdrett.value;
+
+                    tabletxt.innerHTML="";
+                    if (idrettKey=="alleIdretter") {
+                        lagDB
+                            .orderByChild("Idrett")
+                            .on("child_added", hentLagTilTabell);
+
+
+                    } else{
+                        lagDB
+                            .orderByChild("Idrett")
+                            .equalTo("-LCSeldr2EJ-4e1Y6V61")
+                            .on("child_added", hentLagTilTabell);
+
+                    }
+
+
+                    
+                }
+                */
+
+
 
 
             </script>
@@ -423,7 +575,24 @@
 
 
             <footer class="footer">
+
+
                 <a href="admin.html">Admistrator? Klikk her!</a>
+
+               <!-- <select id="selSorterIdrett" onchange="sorterIdrett()" >
+                    <option value="alleIdretter">Alle idretter</option>
+                </select>
+                -->
+
+                <div class="footerbuttons">
+                   <button class="knapp"  id="rkey" onclick="visFotball()">Vis bare fotball</button>
+                        <button class="knapp" onclick="visCurling()">Vis bare curling</button>
+                            <button class="knapp" onclick="visAlle()">Sorter etter idrett</button>
+                </div>
+
+
+
+
             </footer>
     
 </div>
